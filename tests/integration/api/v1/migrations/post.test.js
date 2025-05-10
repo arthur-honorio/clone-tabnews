@@ -1,18 +1,18 @@
 import database from "infra/database";
+import orchestrator from "tests/orchestrator.js";
 
-beforeAll(cleanSchema);
-
-async function cleanSchema() {
+beforeAll(async () => {
+  await orchestrator.waitForAllServices();
   await database.query("DROP SCHEMA public cascade; CREATE SCHEMA public;");
-}
+});
 
 test("The first POST to api/v1/migrations should get at least one migration", async () => {
-  const firsResponse = await migrationPostRequest();
-  expect(firsResponse.status).toBe(201);
+  const firstResponse = await migrationPostRequest();
+  expect(firstResponse.status).toBe(201);
 
-  const firsResponseBody = await firsResponse.json();
-  expect(Array.isArray(firsResponseBody)).toBe(true);
-  expect(firsResponseBody.length).toBeGreaterThan(0);
+  const firstResponseBody = await firstResponse.json();
+  expect(Array.isArray(firstResponseBody)).toBe(true);
+  expect(firstResponseBody.length).toBeGreaterThan(0);
 });
 
 test("The second POST to api/v1/migrations should get 0 migrations left", async () => {
